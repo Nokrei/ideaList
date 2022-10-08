@@ -1,0 +1,27 @@
+.header {
+  padding: 10px;
+}
+.header h1 {
+  text-align: center;
+}
+.addContainer {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.addContainer button {
+  padding: 5px 80px;
+  font-size: 30px;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.sorting {
+  text-align: center;
+}
+.sorting button:not(:last-of-type) {
+  margin-right: 5px;
+}
