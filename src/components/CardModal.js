@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Modal from "react-modal";
 import styles from "../styles/Modal.module.css";
 const customStyles = {
@@ -74,3 +75,17 @@ export default function CardModal({
     </div>
   );
 }
+
+CardModal.propTypes = {
+  modalIsOpen: PropTypes.bool,
+  closeModal: PropTypes.func,
+  title: PropTypes.string,
+  changeTitle: PropTypes.func,
+  description: PropTypes.string,
+  changeDescription: PropTypes.func,
+  modalSubmit: PropTypes.func,
+  characterCount: PropTypes.number,
+  createdAt: PropTypes.string,
+  updatedAt: PropTypes.string,
+  createdAtExact: PropTypes.string,
+};

@@ -192,7 +192,6 @@ export default function MainPage() {
                     saveNewDescription={() => {
                       handleSaveNewDescription(card.createdAtExact);
                     }}
-                    characterCount={characterCount}
                   />
                 );
               })
@@ -216,7 +215,6 @@ export default function MainPage() {
                     saveNewDescription={() => {
                       handleSaveNewDescription(card.createdAtExact);
                     }}
-                    characterCount={characterCount}
                   />
                 );
               })}

@@ -1,6 +1,8 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { FaEdit } from "react-icons/fa";
 import styles from "../styles/Card.module.css";
+
 export default function Card({
   title,
   description,
@@ -52,3 +54,17 @@ export default function Card({
     </div>
   );
 }
+
+Card.propTypes = {
+  title: PropTypes.string,
+  description: PropTypes.string,
+  editDescription: PropTypes.func,
+  createdAt: PropTypes.string,
+  createdAtExact: PropTypes.string,
+  updatedAt: PropTypes.string,
+  deleteCard: PropTypes.func,
+  editEnabled: PropTypes.bool,
+  newDescription: PropTypes.string,
+  changeNewDescription: PropTypes.func,
+  saveNewDescription: PropTypes.func,
+};
