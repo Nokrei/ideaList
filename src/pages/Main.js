@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useLocalStorage from "../utils/useLocalStorage";
 import CardModal from "../components/CardModal";
 import Card from "../components/Card";
 import styles from "../styles/Main.module.css";
@@ -10,7 +11,9 @@ export default function MainPage() {
   // const { v4: uuidv4 } = require("uuid");
 
   // Array to contain all tasks
-  const [ideas, setIdeas] = useState([]);
+  // const [ideas, setStoredIdeas] = useState([]);
+  // Replaced with local storage
+  const [storedIdeas, setStoredIdeas] = useLocalStorage("ideaList", []);
 
   // Handle Modal open and close
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -40,7 +43,7 @@ export default function MainPage() {
   const handleModalSubmit = (e) => {
     e.preventDefault();
 
-    setIdeas((current) => [
+    setStoredIdeas((current) => [
       ...current,
       {
         title: titleFromModal,
@@ -59,7 +62,7 @@ export default function MainPage() {
         editEnabled: false,
       },
     ]);
-    localStorage.setItem("ideas", JSON.stringify(ideas));
+
     setModalIsOpen(false);
     setTitleFromModal("");
     setDescriptionFromModal("");
@@ -68,7 +71,7 @@ export default function MainPage() {
   //   Handle card content
   //   Delete by exact time of creation
   const handleDeleteCard = (timeOfCreation) => {
-    setIdeas((current) =>
+    setStoredIdeas((current) =>
       current.filter((idea) => {
         return idea.createdAtExact !== timeOfCreation;
       })
@@ -77,7 +80,7 @@ export default function MainPage() {
 
   // Click edit icon, enable editing
   const handleEditDescription = (id) => {
-    const newList = ideas.map((idea) => {
+    const newList = storedIdeas.map((idea) => {
       if (idea.createdAtExact === id) {
         const updatedIdea = {
           ...idea,
@@ -88,7 +91,7 @@ export default function MainPage() {
 
       return idea;
     });
-    setIdeas(newList);
+    setStoredIdeas(newList);
   };
 
   const [newDescription, setNewDescription] = useState("");
@@ -96,7 +99,7 @@ export default function MainPage() {
   // Input new description
   const handleChangeNewDescription = (id) => {
     setNewDescription(id.target.value);
-    const newList = ideas.map((idea) => {
+    const newList = storedIdeas.map((idea) => {
       if (idea.createdAtExact === id) {
         const updatedIdea = {
           ...idea,
@@ -107,12 +110,12 @@ export default function MainPage() {
 
       return idea;
     });
-    setIdeas(newList);
+    setStoredIdeas(newList);
   };
 
   // Replace old description with new
   const handleSaveNewDescription = (id) => {
-    const newList = ideas.map((idea) => {
+    const newList = storedIdeas.map((idea) => {
       if (idea.createdAtExact === id) {
         const updatedIdea = {
           ...idea,
@@ -130,7 +133,7 @@ export default function MainPage() {
       return idea;
     });
     setNewDescription("");
-    setIdeas(newList);
+    setStoredIdeas(newList);
     toast("Task updated!");
   };
 
@@ -171,9 +174,9 @@ export default function MainPage() {
         </button>
       </div>
       <div className={styles.container}>
-        {ideas && !sortByDate
-          ? ideas
-              .sort((a, b) => (a.title > b.title ? 1 : -1))
+        {storedIdeas && !sortByDate
+          ? storedIdeas
+              .sort((a, b) => (b.title > a.title ? 1 : -1))
               .map((card) => {
                 return (
                   <Card
@@ -195,8 +198,9 @@ export default function MainPage() {
                   />
                 );
               })
-          : ideas
-              .sort((a, b) => (b.createdAtExact > a.createdAtExact ? 1 : -1))
+          : storedIdeas &&
+            storedIdeas
+              .sort((a, b) => (a.createdAtExact > b.createdAtExact ? 1 : -1))
               .map((card) => {
                 return (
                   <Card
