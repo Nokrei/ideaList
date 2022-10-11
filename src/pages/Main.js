@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useReducer } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useLocalStorage from "../utils/useLocalStorage";
@@ -137,8 +137,20 @@ export default function MainPage() {
     toast("Task updated!");
   };
 
-  // Sorting. Tried other ways - this sucks, but works
-  const [sortByDate, setSortByDate] = useState(true);
+  // Sorting.
+
+  const sortByDate = () => {
+    setStoredIdeas(
+      [...storedIdeas].sort((a, b) =>
+        a.createdAtExact > b.createdAtExact ? 1 : -1
+      )
+    );
+  };
+  const sortByTitle = () => {
+    setStoredIdeas(
+      [...storedIdeas].sort((a, b) => (a.title > b.title ? 1 : -1))
+    );
+  };
 
   return (
     <div className={styles.main}>
@@ -163,65 +175,36 @@ export default function MainPage() {
         </button>
       </div>
       <div className={styles.sorting}>
-        <button onClick={() => setSortByDate(true)} className="btn btn-primary">
+        <button onClick={sortByDate} className="btn btn-primary">
           Sort by date
         </button>
-        <button
-          onClick={() => setSortByDate(false)}
-          className="btn btn-primary"
-        >
+        <button onClick={sortByTitle} className="btn btn-primary">
           Sort by title
         </button>
       </div>
       <div className={styles.container}>
-        {storedIdeas && !sortByDate
-          ? storedIdeas
-              .sort((a, b) => (b.title > a.title ? 1 : -1))
-              .map((card) => {
-                return (
-                  <Card
-                    key={card.createdAtExact}
-                    title={card.title}
-                    description={card.description}
-                    deleteCard={() => handleDeleteCard(card.createdAtExact)}
-                    createdAt={card.createdAt}
-                    updatedAt={card.updatedAt}
-                    editDescription={() =>
-                      handleEditDescription(card.createdAtExact)
-                    }
-                    editEnabled={card.editEnabled}
-                    newDescription={newDescription}
-                    changeNewDescription={handleChangeNewDescription}
-                    saveNewDescription={() => {
-                      handleSaveNewDescription(card.createdAtExact);
-                    }}
-                  />
-                );
-              })
-          : storedIdeas &&
-            storedIdeas
-              .sort((a, b) => (a.createdAtExact > b.createdAtExact ? 1 : -1))
-              .map((card) => {
-                return (
-                  <Card
-                    key={card.createdAtExact}
-                    title={card.title}
-                    description={card.description}
-                    deleteCard={() => handleDeleteCard(card.createdAtExact)}
-                    createdAt={card.createdAt}
-                    updatedAt={card.updatedAt}
-                    editDescription={() =>
-                      handleEditDescription(card.createdAtExact)
-                    }
-                    editEnabled={card.editEnabled}
-                    newDescription={newDescription}
-                    changeNewDescription={handleChangeNewDescription}
-                    saveNewDescription={() => {
-                      handleSaveNewDescription(card.createdAtExact);
-                    }}
-                  />
-                );
-              })}
+        {storedIdeas &&
+          storedIdeas.map((card) => {
+            return (
+              <Card
+                key={card.createdAtExact}
+                title={card.title}
+                description={card.description}
+                deleteCard={() => handleDeleteCard(card.createdAtExact)}
+                createdAt={card.createdAt}
+                updatedAt={card.updatedAt}
+                editDescription={() =>
+                  handleEditDescription(card.createdAtExact)
+                }
+                editEnabled={card.editEnabled}
+                newDescription={newDescription}
+                changeNewDescription={handleChangeNewDescription}
+                saveNewDescription={() => {
+                  handleSaveNewDescription(card.createdAtExact);
+                }}
+              />
+            );
+          })}
       </div>
     </div>
   );
