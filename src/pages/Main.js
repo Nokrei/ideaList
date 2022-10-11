@@ -15,6 +15,51 @@ export default function MainPage() {
   // Replaced with local storage
   const [storedIdeas, setStoredIdeas] = useLocalStorage("ideaList", []);
 
+  // Reducer
+  const initialState = { ideas: [] };
+
+  function reducer(state, action) {
+    switch (action.type) {
+      case "add":
+        return { ideas: [...state.ideas, action.payload] };
+      case "delete":
+        return {
+          ...state,
+          ideas: state.ideas.filter(
+            (idea) => idea.createdAtExact !== action.payload
+          ),
+        };
+      case "enableEdit":
+        return {
+          ...state,
+          ideas: state.ideas.map((item) => {
+            if (item.createdAtExact === action.payload) {
+              const updatedItem = {
+                ...item,
+                editEnabled: true,
+              };
+              return updatedItem;
+            }
+            return item;
+          }),
+        };
+
+      case "sortByDate":
+        return {
+          ...state,
+          ideas: state.ideas.sort((a, b) =>
+            a.createdAtExact > b.createdAtExact ? 1 : -1
+          ),
+        };
+      case "sortByTitle":
+        return {
+          ...state,
+          ideas: state.ideas.sort((a, b) => (a.title > b.title ? 1 : -1)),
+        };
+    }
+  }
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   // Handle Modal open and close
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const handleModalOpen = () => {
@@ -42,10 +87,9 @@ export default function MainPage() {
 
   const handleModalSubmit = (e) => {
     e.preventDefault();
-
-    setStoredIdeas((current) => [
-      ...current,
-      {
+    dispatch({
+      type: "add",
+      payload: {
         title: titleFromModal,
         description: descriptionFromModal,
         createdAt: new Date()
@@ -61,8 +105,7 @@ export default function MainPage() {
         createdAtExact: Date.now(),
         editEnabled: false,
       },
-    ]);
-
+    });
     setModalIsOpen(false);
     setTitleFromModal("");
     setDescriptionFromModal("");
@@ -71,27 +114,18 @@ export default function MainPage() {
   //   Handle card content
   //   Delete by exact time of creation
   const handleDeleteCard = (timeOfCreation) => {
-    setStoredIdeas((current) =>
-      current.filter((idea) => {
-        return idea.createdAtExact !== timeOfCreation;
-      })
-    );
+    dispatch({
+      type: "delete",
+      payload: timeOfCreation,
+    });
   };
 
   // Click edit icon, enable editing
   const handleEditDescription = (id) => {
-    const newList = storedIdeas.map((idea) => {
-      if (idea.createdAtExact === id) {
-        const updatedIdea = {
-          ...idea,
-          editEnabled: true,
-        };
-        return updatedIdea;
-      }
-
-      return idea;
+    dispatch({
+      type: "enableEdit",
+      payload: id,
     });
-    setStoredIdeas(newList);
   };
 
   const [newDescription, setNewDescription] = useState("");
@@ -140,16 +174,14 @@ export default function MainPage() {
   // Sorting.
 
   const sortByDate = () => {
-    setStoredIdeas(
-      [...storedIdeas].sort((a, b) =>
-        a.createdAtExact > b.createdAtExact ? 1 : -1
-      )
-    );
+    dispatch({
+      type: "sortByDate",
+    });
   };
   const sortByTitle = () => {
-    setStoredIdeas(
-      [...storedIdeas].sort((a, b) => (a.title > b.title ? 1 : -1))
-    );
+    dispatch({
+      type: "sortByTitle",
+    });
   };
 
   return (
@@ -183,8 +215,8 @@ export default function MainPage() {
         </button>
       </div>
       <div className={styles.container}>
-        {storedIdeas &&
-          storedIdeas.map((card) => {
+        {state.ideas &&
+          state.ideas.map((card) => {
             return (
               <Card
                 key={card.createdAtExact}
