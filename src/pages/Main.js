@@ -18,21 +18,21 @@ export default function MainPage() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  // Handle Modal data
+  const [titleFromModal, setTitleFromModal] = useState("");
+  const [descriptionFromModal, setDescriptionFromModal] = useState("");
+  const [characterCount, setCharacterCount] = useState(0);
+  const [newDescription, setNewDescription] = useState("");
+
   // Handle Modal open and close
   const [modalIsOpen, setModalIsOpen] = useState(false);
+
   const handleModalOpen = () => {
     setModalIsOpen(true);
   };
   const handleModalClose = () => {
     setModalIsOpen(false);
   };
-
-  // Handle Modal data
-  const [titleFromModal, setTitleFromModal] = useState("");
-
-  const [descriptionFromModal, setDescriptionFromModal] = useState("");
-
-  const [characterCount, setCharacterCount] = useState(0);
 
   const changeTitleFromModal = (e) => {
     setTitleFromModal(e.target.value);
@@ -85,8 +85,6 @@ export default function MainPage() {
       payload: id,
     });
   };
-
-  const [newDescription, setNewDescription] = useState("");
 
   // Input new description
   const handleChangeNewDescription = (id) => {
@@ -173,28 +171,25 @@ export default function MainPage() {
         </button>
       </div>
       <div className={styles.container}>
-        {state.ideas &&
-          state.ideas.map((card) => {
-            return (
-              <Card
-                key={card.createdAtExact}
-                title={card.title}
-                description={card.description}
-                deleteCard={() => handleDeleteCard(card.createdAtExact)}
-                createdAt={card.createdAt}
-                updatedAt={card.updatedAt}
-                editDescription={() =>
-                  handleEditDescription(card.createdAtExact)
-                }
-                editEnabled={card.editEnabled}
-                newDescription={newDescription}
-                changeNewDescription={handleChangeNewDescription}
-                saveNewDescription={() => {
-                  handleSaveNewDescription(card.createdAtExact);
-                }}
-              />
-            );
-          })}
+        {state.ideas.map((card) => {
+          return (
+            <Card
+              key={card.createdAtExact}
+              title={card.title}
+              description={card.description}
+              deleteCard={() => handleDeleteCard(card.createdAtExact)}
+              createdAt={card.createdAt}
+              updatedAt={card.updatedAt}
+              editDescription={() => handleEditDescription(card.createdAtExact)}
+              editEnabled={card.editEnabled}
+              newDescription={newDescription}
+              changeNewDescription={handleChangeNewDescription}
+              saveNewDescription={() => {
+                handleSaveNewDescription(card.createdAtExact);
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );
