@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useLocalStorage from "../utils/useLocalStorage";
@@ -6,6 +6,7 @@ import reducer, { initialState } from "../state/reducer";
 import CardModal from "../components/CardModal";
 import Card from "../components/Card";
 import styles from "../styles/Main.module.css";
+import Form from "../components/Form";
 
 export default function MainPage() {
   // Get random ids for keys - currently using the exact date for this
@@ -140,6 +141,12 @@ export default function MainPage() {
     });
   };
 
+  useEffect(() => {
+    dispatch({
+      type: "copyFromLocal",
+      payload: storedIdeas,
+    });
+  }, [storedIdeas]);
   return (
     <div className={styles.main}>
       <ToastContainer autoClose={2000} hideProgressBar={true} />
@@ -191,6 +198,7 @@ export default function MainPage() {
           );
         })}
       </div>
+      <Form />
     </div>
   );
 }

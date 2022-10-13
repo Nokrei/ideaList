@@ -25,7 +25,12 @@ export default function reducer(state, action) {
           return item;
         }),
       };
-
+    case "copyFromLocal": {
+      return {
+        ...state,
+        ideas: action.payload,
+      };
+    }
     case "sortByDate":
       return {
         ...state,
