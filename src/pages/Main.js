@@ -9,12 +9,6 @@ import styles from "../styles/Main.module.css";
 import Form from "../components/Form";
 
 export default function MainPage() {
-  // Get random ids for keys - currently using the exact date for this
-  // const { v4: uuidv4 } = require("uuid");
-
-  // Array to contain all tasks
-  // const [ideas, setStoredIdeas] = useState([]);
-  // Replaced with local storage
   const [storedIdeas, setStoredIdeas] = useLocalStorage("ideaList", []);
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -34,43 +28,32 @@ export default function MainPage() {
   const handleModalClose = () => {
     setModalIsOpen(false);
   };
-
   const changeTitleFromModal = (e) => {
     setTitleFromModal(e.target.value);
   };
-
   const changeDescriptionFromModal = (e) => {
     setDescriptionFromModal(e.target.value);
     setCharacterCount(e.target.value.length);
   };
-
   const handleModalSubmit = (e) => {
     e.preventDefault();
-    dispatch({
-      type: "add",
-      payload: {
-        title: titleFromModal,
-        description: descriptionFromModal,
-        createdAt: new Date()
-          .toISOString()
-          .slice(0, -5)
-          .split("T")
-          .join(" at "),
-        updatedAt: new Date()
-          .toISOString()
-          .slice(0, -5)
-          .split("T")
-          .join(" at "),
-        createdAtExact: Date.now(),
-        editEnabled: false,
-      },
-    });
     setModalIsOpen(false);
     setTitleFromModal("");
     setDescriptionFromModal("");
   };
 
-  //   Handle card content
+  const submitForm = (data) => {
+    dispatch({
+      type: "add",
+      payload: {
+        title: data.title,
+        description: data.description,
+        createdAt: Date.now(),
+        editEnabled: false,
+      },
+    });
+  };
+
   //   Delete by exact time of creation
   const handleDeleteCard = (timeOfCreation) => {
     dispatch({
@@ -141,12 +124,13 @@ export default function MainPage() {
     });
   };
 
-  useEffect(() => {
-    dispatch({
-      type: "copyFromLocal",
-      payload: storedIdeas,
-    });
-  }, [storedIdeas]);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: "copyFromLocal",
+  //     payload: storedIdeas,
+  //   });
+  // }, [storedIdeas]);
+
   return (
     <div className={styles.main}>
       <ToastContainer autoClose={2000} hideProgressBar={true} />
@@ -184,7 +168,7 @@ export default function MainPage() {
               key={card.createdAtExact}
               title={card.title}
               description={card.description}
-              deleteCard={() => handleDeleteCard(card.createdAtExact)}
+              deleteCard={() => handleDeleteCard(card.createdAt)}
               createdAt={card.createdAt}
               updatedAt={card.updatedAt}
               editDescription={() => handleEditDescription(card.createdAtExact)}
@@ -198,7 +182,7 @@ export default function MainPage() {
           );
         })}
       </div>
-      <Form />
+      <Form submitForm={submitForm} count={characterCount} />
     </div>
   );
 }

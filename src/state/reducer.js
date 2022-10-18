@@ -7,9 +7,7 @@ export default function reducer(state, action) {
     case "delete":
       return {
         ...state,
-        ideas: state.ideas.filter(
-          (idea) => idea.createdAtExact !== action.payload
-        ),
+        ideas: state.ideas.filter((idea) => idea.createdAt !== action.payload),
       };
     case "enableEdit":
       return {
@@ -34,9 +32,7 @@ export default function reducer(state, action) {
     case "sortByDate":
       return {
         ...state,
-        ideas: state.ideas.sort((a, b) =>
-          a.createdAtExact > b.createdAtExact ? 1 : -1
-        ),
+        ideas: state.ideas.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1)),
       };
     case "sortByTitle":
       return {

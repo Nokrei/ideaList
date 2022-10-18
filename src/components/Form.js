@@ -1,27 +1,20 @@
-import React, { useReducer } from "react";
+import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
-import useLocalStorage from "../utils/useLocalStorage";
-import reducer, { initialState } from "../state/reducer";
 import styles from "../styles/Form.module.css";
 
 export default function Form({ submitForm }) {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
 
-  const [storedIdeas, setStoredIdeas] = useLocalStorage("ideaList", []);
+  const maxLength = 140;
+  const count = watch("description");
 
-  const onSubmit = (data) => {
-    setStoredIdeas((current) => [
-      ...current,
-      {
-        title: data.title,
-        description: data.description,
-      },
-    ]);
-  };
+  const onSubmit = submitForm;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -36,10 +29,13 @@ export default function Form({ submitForm }) {
       </div>
       <div className={styles.inputGroup}>
         <label htmlFor="description">Description</label>
+        <p>
+          {typeof count === "string" ? count.length : 0} / {maxLength}
+        </p>
         <textarea
           id="description"
           rows={10}
-          {...register("description", { required: true, maxLength: 140 })}
+          {...register("description", { required: true, maxLength: maxLength })}
         />
         {errors.description && <span>This field is required</span>}
       </div>
@@ -48,3 +44,7 @@ export default function Form({ submitForm }) {
     </form>
   );
 }
+
+Form.propTypes = {
+  submitForm: PropTypes.func.isRequired,
+};
