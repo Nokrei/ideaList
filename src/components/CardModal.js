@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Modal from "react-modal";
 import styles from "../styles/Modal.module.css";
+
 const customStyles = {
   content: {
     top: "50%",
@@ -16,19 +17,7 @@ const customStyles = {
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement("#root");
 
-export default function CardModal({
-  modalIsOpen,
-  closeModal,
-  title,
-  changeTitle,
-  description,
-  changeDescription,
-  modalSubmit,
-  characterCount,
-  createdAt,
-  updatedAt,
-  createdAtExact,
-}) {
+export default function CardModal({ modalIsOpen, closeModal, children }) {
   return (
     <div>
       <Modal
@@ -43,33 +32,7 @@ export default function CardModal({
               X
             </button>
           </div>
-          <div className={styles.content}>
-            <form onSubmit={modalSubmit}>
-              <div className={styles.inputGroup}>
-                <label htmlFor="title">Title</label>
-                <input
-                  id="title"
-                  type="text"
-                  placeholder="title"
-                  value={title}
-                  onChange={changeTitle}
-                  autoFocus
-                ></input>
-              </div>
-              <div className={styles.inputGroup}>
-                <label htmlFor="description">Description</label>
-                <span>{characterCount} / 140</span>
-                <textarea
-                  id="description"
-                  rows={10}
-                  maxLength={140}
-                  value={description}
-                  onChange={changeDescription}
-                ></textarea>
-              </div>
-              <input className="btn btn-primary" type="submit" value="Add" />
-            </form>
-          </div>
+          <div className={styles.content}>{children}</div>
         </div>
       </Modal>
     </div>
@@ -77,15 +40,6 @@ export default function CardModal({
 }
 
 CardModal.propTypes = {
-  modalIsOpen: PropTypes.bool,
-  closeModal: PropTypes.func,
-  title: PropTypes.string,
-  changeTitle: PropTypes.func,
-  description: PropTypes.string,
-  changeDescription: PropTypes.func,
-  modalSubmit: PropTypes.func,
-  characterCount: PropTypes.number,
-  createdAt: PropTypes.string,
-  updatedAt: PropTypes.string,
-  createdAtExact: PropTypes.string,
+  modalIsOpen: PropTypes.bool.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };

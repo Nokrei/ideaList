@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect } from "react";
+import React, { useState, useReducer } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useLocalStorage from "../utils/useLocalStorage";
@@ -13,34 +13,8 @@ export default function MainPage() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // Handle Modal data
-  const [titleFromModal, setTitleFromModal] = useState("");
-  const [descriptionFromModal, setDescriptionFromModal] = useState("");
-  const [characterCount, setCharacterCount] = useState(0);
   const [newDescription, setNewDescription] = useState("");
-
-  // Handle Modal open and close
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  const handleModalOpen = () => {
-    setModalIsOpen(true);
-  };
-  const handleModalClose = () => {
-    setModalIsOpen(false);
-  };
-  const changeTitleFromModal = (e) => {
-    setTitleFromModal(e.target.value);
-  };
-  const changeDescriptionFromModal = (e) => {
-    setDescriptionFromModal(e.target.value);
-    setCharacterCount(e.target.value.length);
-  };
-  const handleModalSubmit = (e) => {
-    e.preventDefault();
-    setModalIsOpen(false);
-    setTitleFromModal("");
-    setDescriptionFromModal("");
-  };
 
   const submitForm = (data) => {
     dispatch({
@@ -52,6 +26,9 @@ export default function MainPage() {
         editEnabled: false,
       },
     });
+    setModalIsOpen(false);
+    setStoredIdeas(state.ideas);
+    console.log(storedIdeas);
   };
 
   //   Delete by exact time of creation
@@ -73,46 +50,25 @@ export default function MainPage() {
   // Input new description
   const handleChangeNewDescription = (id) => {
     setNewDescription(id.target.value);
-    const newList = storedIdeas.map((idea) => {
-      if (idea.createdAtExact === id) {
-        const updatedIdea = {
-          ...idea,
-          newDescription: id.target.value,
-        };
-        return updatedIdea;
-      }
-
-      return idea;
+    dispatch({
+      type: "changeDescription",
+      payload: id,
     });
-    setStoredIdeas(newList);
   };
 
   // Replace old description with new
   const handleSaveNewDescription = (id) => {
-    const newList = storedIdeas.map((idea) => {
-      if (idea.createdAtExact === id) {
-        const updatedIdea = {
-          ...idea,
-          description: newDescription,
-          editEnabled: false,
-          updatedAt: new Date()
-            .toISOString()
-            .slice(0, -5)
-            .split("T")
-            .join(" at "),
-        };
-        return updatedIdea;
-      }
-
-      return idea;
+    dispatch({
+      type: "saveNewDescription",
+      payload: {
+        id: id,
+        newDescription: newDescription,
+      },
     });
-    setNewDescription("");
-    setStoredIdeas(newList);
     toast("Task updated!");
   };
 
   // Sorting.
-
   const sortByDate = () => {
     dispatch({
       type: "sortByDate",
@@ -122,6 +78,14 @@ export default function MainPage() {
     dispatch({
       type: "sortByTitle",
     });
+  };
+
+  //  Handle modal open and close
+  const handleModalOpen = () => {
+    setModalIsOpen(true);
+  };
+  const handleModalClose = () => {
+    setModalIsOpen(false);
   };
 
   // useEffect(() => {
@@ -134,16 +98,9 @@ export default function MainPage() {
   return (
     <div className={styles.main}>
       <ToastContainer autoClose={2000} hideProgressBar={true} />
-      <CardModal
-        modalIsOpen={modalIsOpen}
-        closeModal={handleModalClose}
-        modalSubmit={handleModalSubmit}
-        title={titleFromModal}
-        description={descriptionFromModal}
-        characterCount={characterCount}
-        changeTitle={changeTitleFromModal}
-        changeDescription={changeDescriptionFromModal}
-      />
+      <CardModal modalIsOpen={modalIsOpen} closeModal={handleModalClose}>
+        <Form submitForm={submitForm} />
+      </CardModal>
 
       <header className={styles.header}>
         <h1 className="text-blue">Idea Board</h1>
@@ -165,24 +122,23 @@ export default function MainPage() {
         {state.ideas.map((card) => {
           return (
             <Card
-              key={card.createdAtExact}
+              key={card.createdAt}
               title={card.title}
               description={card.description}
               deleteCard={() => handleDeleteCard(card.createdAt)}
               createdAt={card.createdAt}
               updatedAt={card.updatedAt}
-              editDescription={() => handleEditDescription(card.createdAtExact)}
+              editDescription={() => handleEditDescription(card.createdAt)}
               editEnabled={card.editEnabled}
               newDescription={newDescription}
               changeNewDescription={handleChangeNewDescription}
               saveNewDescription={() => {
-                handleSaveNewDescription(card.createdAtExact);
+                handleSaveNewDescription(card.createdAt);
               }}
             />
           );
         })}
       </div>
-      <Form submitForm={submitForm} count={characterCount} />
     </div>
   );
 }

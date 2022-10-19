@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
 import styles from "../styles/Form.module.css";
@@ -21,8 +21,8 @@ export default function Form({ submitForm }) {
       <div className={styles.inputGroup}>
         <label htmlFor="title">Title</label>
         <input
+          autoFocus
           id="title"
-          defaultValue="test"
           {...register("title", { required: true, maxLength: 20 })}
         />
         {errors.title && <span>This field is required</span>}
@@ -40,7 +40,7 @@ export default function Form({ submitForm }) {
         {errors.description && <span>This field is required</span>}
       </div>
 
-      <input type="submit" />
+      <input type="submit" className="btn btn-primary" />
     </form>
   );
 }

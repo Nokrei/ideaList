@@ -8,7 +8,6 @@ export default function Card({
   description,
   editDescription,
   createdAt,
-  createdAtExact,
   updatedAt,
   deleteCard,
   editEnabled,
@@ -21,7 +20,7 @@ export default function Card({
       <h2>{title}</h2>
       <div className={styles.dates}>
         <p>Created on: {createdAt}</p>
-        <p>Updated on: {updatedAt}</p>
+        {updatedAt && <p>Updated on: {updatedAt}</p>}
       </div>
       <div className={styles.cardBody}>
         {!editEnabled ? (
@@ -56,15 +55,14 @@ export default function Card({
 }
 
 Card.propTypes = {
-  title: PropTypes.string,
-  description: PropTypes.string,
-  editDescription: PropTypes.func,
-  createdAt: PropTypes.number,
-  createdAtExact: PropTypes.instanceOf(Date),
-  updatedAt: PropTypes.instanceOf(Date),
-  deleteCard: PropTypes.func,
-  editEnabled: PropTypes.bool,
-  newDescription: PropTypes.string,
-  changeNewDescription: PropTypes.func,
-  saveNewDescription: PropTypes.func,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  editDescription: PropTypes.func.isRequired,
+  createdAt: PropTypes.number.isRequired,
+  updatedAt: PropTypes.number,
+  deleteCard: PropTypes.func.isRequired,
+  editEnabled: PropTypes.bool.isRequired,
+  newDescription: PropTypes.string.isRequired,
+  changeNewDescription: PropTypes.func.isRequired,
+  saveNewDescription: PropTypes.func.isRequired,
 };
