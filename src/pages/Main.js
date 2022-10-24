@@ -1,5 +1,5 @@
 import React, { useState, useReducer } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useLocalStorage from "../utils/useLocalStorage";
 import reducer, { initialState } from "../state/reducer";
@@ -13,13 +13,13 @@ export default function MainPage() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const [newDescription, setNewDescription] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const submitForm = (data) => {
+    // Add new idea
     dispatch({
       type: "add",
-      payload: {
+      newIdea: {
         title: data.title,
         description: data.description,
         createdAt: Date.now(),
@@ -28,44 +28,14 @@ export default function MainPage() {
     });
     setModalIsOpen(false);
     setStoredIdeas(state.ideas);
-    console.log(storedIdeas);
   };
 
   //   Delete by exact time of creation
   const handleDeleteCard = (timeOfCreation) => {
     dispatch({
       type: "delete",
-      payload: timeOfCreation,
+      createdAt: timeOfCreation,
     });
-  };
-
-  // Click edit icon, enable editing
-  const handleEditDescription = (id) => {
-    dispatch({
-      type: "enableEdit",
-      payload: id,
-    });
-  };
-
-  // Input new description
-  const handleChangeNewDescription = (id) => {
-    setNewDescription(id.target.value);
-    dispatch({
-      type: "changeDescription",
-      payload: id,
-    });
-  };
-
-  // Replace old description with new
-  const handleSaveNewDescription = (id) => {
-    dispatch({
-      type: "saveNewDescription",
-      payload: {
-        id: id,
-        newDescription: newDescription,
-      },
-    });
-    toast("Task updated!");
   };
 
   // Sorting.
@@ -81,11 +51,9 @@ export default function MainPage() {
   };
 
   //  Handle modal open and close
-  const handleModalOpen = () => {
-    setModalIsOpen(true);
-  };
-  const handleModalClose = () => {
-    setModalIsOpen(false);
+
+  const handleModal = () => {
+    modalIsOpen ? setModalIsOpen(false) : setModalIsOpen(true);
   };
 
   // useEffect(() => {
@@ -98,7 +66,11 @@ export default function MainPage() {
   return (
     <div className={styles.main}>
       <ToastContainer autoClose={2000} hideProgressBar={true} />
-      <CardModal modalIsOpen={modalIsOpen} closeModal={handleModalClose}>
+      <CardModal
+        title="Add new"
+        modalIsOpen={modalIsOpen}
+        closeModal={handleModal}
+      >
         <Form submitForm={submitForm} />
       </CardModal>
 
@@ -106,7 +78,7 @@ export default function MainPage() {
         <h1 className="text-blue">Idea Board</h1>
       </header>
       <div className={styles.addContainer}>
-        <button className="btn btn-primary" onClick={handleModalOpen}>
+        <button className="btn btn-primary" onClick={handleModal}>
           +
         </button>
       </div>
@@ -128,13 +100,6 @@ export default function MainPage() {
               deleteCard={() => handleDeleteCard(card.createdAt)}
               createdAt={card.createdAt}
               updatedAt={card.updatedAt}
-              editDescription={() => handleEditDescription(card.createdAt)}
-              editEnabled={card.editEnabled}
-              newDescription={newDescription}
-              changeNewDescription={handleChangeNewDescription}
-              saveNewDescription={() => {
-                handleSaveNewDescription(card.createdAt);
-              }}
             />
           );
         })}
@@ -142,3 +107,8 @@ export default function MainPage() {
     </div>
   );
 }
+
+// To do:
+// caryying
+// local storage
+//

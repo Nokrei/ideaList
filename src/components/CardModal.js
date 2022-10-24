@@ -17,7 +17,12 @@ const customStyles = {
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement("#root");
 
-export default function CardModal({ modalIsOpen, closeModal, children }) {
+export default function CardModal({
+  title,
+  modalIsOpen,
+  closeModal,
+  children,
+}) {
   return (
     <div>
       <Modal
@@ -27,7 +32,7 @@ export default function CardModal({ modalIsOpen, closeModal, children }) {
       >
         <div className={styles.modal}>
           <div className={styles.header}>
-            <h2 className="text-blue">Add New</h2>
+            <h2 className="text-blue">{title}</h2>
             <button className="btn btn-secondary" onClick={closeModal}>
               X
             </button>
