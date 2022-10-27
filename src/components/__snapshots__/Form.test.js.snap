@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Form component should render 1`] = `
+<form>
+  <div
+    class="inputGroup"
+  >
+    <label
+      for="title"
+    >
+      Title
+    </label>
+    <input
+      id="title"
+      name="title"
+    />
+  </div>
+  <div
+    class="inputGroup"
+  >
+    <label
+      for="description"
+    >
+      Description
+    </label>
+    <p>
+      0
+       / 
+      140
+    </p>
+    <textarea
+      id="description"
+      name="description"
+      rows="10"
+    />
+  </div>
+  <input
+    class="btn btn-primary"
+    type="submit"
+  />
+</form>
+`;

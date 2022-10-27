@@ -1,5 +1,16 @@
 export const initialState = { ideas: [] };
 
+export const sortIdeas = (ideas, property, isDescending) => {
+  if (!Array.isArray(ideas)) return [];
+
+  return [...ideas].sort((a, b) => {
+    if (a[property] > b[property]) return isDescending ? -1 : 1;
+    if (a[property] < b[property]) return isDescending ? 1 : -1;
+
+    return 0;
+  });
+};
+
 export default function reducer(state, action) {
   switch (action.type) {
     case "add":
@@ -8,6 +19,7 @@ export default function reducer(state, action) {
     case "delete":
       return {
         ...state,
+        // TODO: write a small function with tests to check that this works
         ideas: state.ideas.filter(
           (idea) => idea.createdAt !== action.createdAt
         ),
@@ -23,13 +35,13 @@ export default function reducer(state, action) {
     case "sortByDate":
       return {
         ...state,
-        ideas: state.ideas.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1)),
+        ideas: sortIdeas(state.ideas, "createdAt"),
       };
 
     case "sortByTitle":
       return {
         ...state,
-        ideas: state.ideas.sort((a, b) => (a.title > b.title ? 1 : -1)),
+        ideas: sortIdeas(state.ideas, "title"),
       };
   }
 }
