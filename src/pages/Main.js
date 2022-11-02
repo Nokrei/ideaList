@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useLocalStorage from "../utils/useLocalStorage";
@@ -17,17 +17,17 @@ export default function MainPage() {
 
   const submitForm = (data) => {
     // Add new idea
+    const newIdea = {
+      title: data.title,
+      description: data.description,
+      createdAt: Date.now(),
+    };
     dispatch({
       type: "add",
-      newIdea: {
-        title: data.title,
-        description: data.description,
-        createdAt: Date.now(),
-        editEnabled: false,
-      },
+      newIdea,
     });
+    setStoredIdeas([...storedIdeas, newIdea]);
     setModalIsOpen(false);
-    setStoredIdeas(state.ideas);
   };
 
   //   Delete by exact time of creation
@@ -36,6 +36,9 @@ export default function MainPage() {
       type: "delete",
       createdAt: timeOfCreation,
     });
+    setStoredIdeas(
+      storedIdeas.filter((idea) => idea.createdAt !== timeOfCreation)
+    );
   };
 
   // Sorting.
@@ -56,12 +59,12 @@ export default function MainPage() {
     modalIsOpen ? setModalIsOpen(false) : setModalIsOpen(true);
   };
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: "copyFromLocal",
-  //     payload: storedIdeas,
-  //   });
-  // }, [storedIdeas]);
+  useEffect(() => {
+    dispatch({
+      type: "copyFromLocal",
+      payload: storedIdeas,
+    });
+  }, []);
 
   return (
     <div className={styles.main}>

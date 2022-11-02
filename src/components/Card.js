@@ -2,15 +2,23 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import { FaEdit } from "react-icons/fa";
+import useLocalStorage from "../utils/useLocalStorage";
 import styles from "../styles/Card.module.css";
 import CardModal from "../components/CardModal";
 import Form from "../components/Form";
 
-export default function Card({ title, description, createdAt, deleteCard }) {
+export default function Card({
+  title,
+  description,
+  createdAt,
+  deleteCard,
+  updatedAt,
+}) {
+  const [storedIdeas, setStoredIdeas] = useLocalStorage("ideaList", []);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
-  const [updatedAt, setUpdatedAt] = useState("");
+  const [newUpdatedAt, setNewUpdatedAt] = useState("");
 
   const handleModalOpen = () => {
     setModalIsOpen(true);
@@ -21,9 +29,23 @@ export default function Card({ title, description, createdAt, deleteCard }) {
   const submitForm = ({ title, description }) => {
     setNewTitle(title);
     setNewDescription(description);
-    setUpdatedAt(Date.now());
+    setNewUpdatedAt(Date.now());
     setModalIsOpen(false);
     toast("Idea Updated!");
+
+    // Update idea in local storage and save
+    const newLocalState = storedIdeas.map((item) => {
+      if (item.createdAt === createdAt) {
+        return {
+          ...item,
+          title,
+          description,
+          updatedAt: Date.now(),
+        };
+      }
+      return item;
+    });
+    setStoredIdeas(newLocalState);
   };
 
   return (
@@ -38,8 +60,12 @@ export default function Card({ title, description, createdAt, deleteCard }) {
       <h2>{newTitle || title}</h2>
       <div className={styles.dates}>
         <p>Created on: {new Date(createdAt).toLocaleString("en-GB")}</p>
-        {updatedAt && (
+        {updatedAt ? (
           <p>Updated on: {new Date(updatedAt).toLocaleString("en-GB")}</p>
+        ) : (
+          newUpdatedAt && (
+            <p>Updated on: {new Date(newUpdatedAt).toLocaleString("en-GB")}</p>
+          )
         )}
       </div>
       <div className={styles.cardBody}>

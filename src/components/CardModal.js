@@ -13,9 +13,8 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
   },
 };
-
-// Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
-Modal.setAppElement("#root");
+// For testing
+// if (process.env.NODE_ENV !== "test") Modal.setAppElement("#app");
 
 export default function CardModal({
   title,
