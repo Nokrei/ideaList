@@ -16,7 +16,7 @@ export default function MainPage() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const submitForm = (data) => {
-    // Add new idea
+    // Add new idea both to state and local storage
     const newIdea = {
       title: data.title,
       description: data.description,
@@ -30,7 +30,7 @@ export default function MainPage() {
     setModalIsOpen(false);
   };
 
-  //   Delete by exact time of creation
+  //   Delete by exact time of creation from state and from local storage
   const handleDeleteCard = (timeOfCreation) => {
     dispatch({
       type: "delete",
@@ -59,6 +59,7 @@ export default function MainPage() {
     modalIsOpen ? setModalIsOpen(false) : setModalIsOpen(true);
   };
 
+  // On initial render copy ideas from local storage
   useEffect(() => {
     dispatch({
       type: "copyFromLocal",
